@@ -1,0 +1,77 @@
+class DelayFixed(DynamicStateful):
+    """
+    Implements DELAY FIXED function.
+
+    Parameters
+    ----------
+    delay_input: callable
+        Input of the delay.
+    delay_time: callable
+        Delay time.
+    initial_value: callable
+        Initial value.
+    tsetp: callable
+        The time step of the model.
+    py_name: str
+        Python name to identify the object.
+
+    Attributes
+    ----------
+    state: float or xarray.DataArray
+        Current state of the object, equal to pipe[pointer].
+    pipe: list
+        List of the delays values.
+    pointer: int
+        Pointer to the last value in the pipe
+
+    """
+
+    def __init__(self, delay_input, delay_time, initial_value, tstep,
+                 py_name):
+        super().__init__()
+        self.init_func = initial_value
+        self.delay_time_func = delay_time
+        self.input_func = delay_input
+        self.tstep = tstep
+        self.order = None
+        self.pointer = 0
+        self.py_name = py_name
+
+    def initialize(self, init_val=None):
+        order = max(self.delay_time_func()/self.tstep(), 1)
+
+        if order != int(order):
+            warnings.warn(
+                self.py_name + '\n'
+                + 'Casting delay order from %f to %i' % (
+                    order, round(order + SMALL_VENSIM)))
+
+        # need to add a small decimal to ensure that 0.5 is rounded to 1
+        # The order can only be set once
+        self.order = round(order + SMALL_VENSIM)
+
+        # set the pointer to 0
+        self.pointer = 0
+
+        if init_val is None:
+            init_state_value = self.init_func()
+        else:
+            init_state_value = init_val
+
+        self.state = init_state_value
+        self.pipe = [init_state_value] * self.order
+
+    def __call__(self):
+        return self.state
+
+    def ddt(self):
+        return np.nan
+
+    def update(self, state):
+        self.pipe[self.pointer] = self.input_func()
+        self.pointer = (self.pointer + 1) % self.order
+        self.state = self.pipe[self.pointer]
+
+    def export(self):
+        return {'state': self.state, 'pointer': self.pointer,
+                'pipe': self.pipe}

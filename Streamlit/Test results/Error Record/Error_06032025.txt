@@ -1,0 +1,14 @@
+TypeError: When setting Planned Annual Incremental Capacity User Input Setting subscripted must be done using a xarray.DataArray with the correct dimensions or a constant value (https://pysd.readthedocs.io/en/master/getting_started.html)
+
+File "C:\Users\Chenyang\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 552, in _run_script
+    exec(code, module.__dict__)
+File "C:\Users\Chenyang\Dropbox\PV Dashboard\1- Dashboard Code\Streamlit\05302025materials_dashboard.py", line 1391, in <module>
+    output = model.run(params={"Time":year,
+File "C:\Users\Chenyang\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\pysd\py_backend\model.py", line 1542, in run
+    self._config_simulation(params, return_columns, return_timestamps,
+File "C:\Users\Chenyang\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\pysd\py_backend\model.py", line 1690, in _config_simulation
+    self.set_components(params)
+File "C:\Users\Chenyang\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\pysd\py_backend\model.py", line 1050, in set_components
+    self._set_components(params, new=False)
+File "C:\Users\Chenyang\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\pysd\py_backend\model.py", line 1064, in _set_components
+    raise TypeError(

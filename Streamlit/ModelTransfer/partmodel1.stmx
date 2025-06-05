@@ -1,0 +1,898 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xmile version="1.0" xmlns="http://docs.oasis-open.org/xmile/ns/XMILE/v1.0" xmlns:isee="http://iseesystems.com/XMILE">
+	<header>
+		<smile version="1.0" namespace="std, isee" uses_arrays="1"/>
+		<name>partmodel1</name>
+		<uuid>a55ffa25-26e0-4d48-a7b3-c5bbe40e9472</uuid>
+		<vendor>isee systems, inc.</vendor>
+		<product version="3.1" isee:build_number="2776" isee:saved_by_v1="true" lang="en">Stella Architect</product>
+	</header>
+	<sim_specs isee:sim_duration="0" isee:run_prefix="Run" isee:simulation_delay="0" isee:restore_on_start="false" method="Euler" time_units="Year" isee:instantaneous_flows="false" isee:ignore_module_errors="true" isee:loop_scores="true" isee:loop_exhaustive_allowed="1000">
+		<start>2023</start>
+		<stop>2050</stop>
+		<dt>1</dt>
+	</sim_specs>
+	<dimensions>
+		<dim name="PVDev">
+			<elem name="Y2023"/>
+			<elem name="Y2024"/>
+			<elem name="Y2025"/>
+			<elem name="Y2026"/>
+			<elem name="Y2027"/>
+			<elem name="Y2028"/>
+			<elem name="Y2029"/>
+			<elem name="Y2030"/>
+			<elem name="Y2031"/>
+			<elem name="Y2032"/>
+			<elem name="Y2033"/>
+			<elem name="Y2034"/>
+			<elem name="Y2035"/>
+			<elem name="Y2036"/>
+			<elem name="Y2037"/>
+			<elem name="Y2038"/>
+			<elem name="Y2039"/>
+			<elem name="Y2040"/>
+			<elem name="Y2041"/>
+			<elem name="Y2042"/>
+			<elem name="Y2043"/>
+			<elem name="Y2044"/>
+			<elem name="Y2045"/>
+			<elem name="Y2046"/>
+			<elem name="Y2047"/>
+			<elem name="Y2048"/>
+			<elem name="Y2049"/>
+			<elem name="Y2050"/>
+		</dim>
+		<dim name="StudyPeriod">
+			<elem name="Y2023"/>
+			<elem name="Y2024"/>
+			<elem name="Y2025"/>
+			<elem name="Y2026"/>
+			<elem name="Y2027"/>
+			<elem name="Y2028"/>
+			<elem name="Y2029"/>
+			<elem name="Y2030"/>
+			<elem name="Y2031"/>
+			<elem name="Y2032"/>
+			<elem name="Y2033"/>
+			<elem name="Y2034"/>
+			<elem name="Y2035"/>
+			<elem name="Y2036"/>
+			<elem name="Y2037"/>
+			<elem name="Y2038"/>
+			<elem name="Y2039"/>
+			<elem name="Y2040"/>
+			<elem name="Y2041"/>
+			<elem name="Y2042"/>
+			<elem name="Y2043"/>
+			<elem name="Y2044"/>
+			<elem name="Y2045"/>
+			<elem name="Y2046"/>
+			<elem name="Y2047"/>
+			<elem name="Y2048"/>
+			<elem name="Y2049"/>
+			<elem name="Y2050"/>
+		</dim>
+	</dimensions>
+	<isee:prefs show_module_prefix="true" live_update_on_drag="true" show_restore_buttons="false" layer="model" isee:design="" isee:design_custom="false" interface_max_page_width="10000" interface_max_page_height="10000" interface_min_page_width="0" interface_min_page_height="0" rerun_on_structure_change="false" saved_runs="1" keep="false" rifp="false"/>
+	<isee:multiplayer_settings include_chat="true" allow_observers="false" advance_time_increment="1" max_advance_time_in_ms="0" model_stops_when_players_drop="false" observer_start_page="home_page" enabled="false"/>
+	<isee:time_formats default_format="Builtin">
+		<isee:time_format name="Builtin" type="adaptive"/>
+	</isee:time_formats>
+	<default_format/>
+	<isee:sensi_specs_list active_index="0">
+		<isee:sensi_specs name="Sensitivity" method="grid"/>
+	</isee:sensi_specs_list>
+	<isee:optimizer_specs_list active_index="0">
+		<isee:optimizer_specs name="Optimization" method="Powell" use_additional_starts_file="false" additional_starts="0" report_interval="1" confidence_range="0"/>
+	</isee:optimizer_specs_list>
+	<isee:payoff_specs_list>
+		<isee:payoff_specs name="Payoff"/>
+	</isee:payoff_specs_list>
+	<model_units>
+		<unit name="Dimensionless">
+			<eqn>1</eqn>
+			<alias>dmnl</alias>
+			<alias>unitless</alias>
+			<alias>fraction</alias>
+		</unit>
+		<unit name="Kilograms">
+			<eqn/>
+			<alias>kg</alias>
+			<alias>kilogram</alias>
+		</unit>
+		<unit name="Tons">
+			<eqn/>
+			<alias>ton</alias>
+		</unit>
+		<unit name="Years">
+			<eqn/>
+			<alias>yr</alias>
+			<alias>year</alias>
+		</unit>
+		<unit name="Watts">
+			<eqn/>
+			<alias>w</alias>
+			<alias>watt</alias>
+		</unit>
+		<unit name="Per Year">
+			<eqn>1/Years</eqn>
+		</unit>
+		<unit name="kilowatt hours per day">
+			<eqn>kWh/day</eqn>
+		</unit>
+		<unit name="kilowatts">
+			<eqn>kW</eqn>
+			<alias>kilowatt</alias>
+		</unit>
+	</model_units>
+	<model>
+		<variables>
+			<aux name="Annual Material\nDemand">
+				<eqn>Yearly_PV_Industry_Demand+Annual_Non_PV_Demand</eqn>
+				<units>Metric Tons/year</units>
+			</aux>
+			<flow name="Yearly PV\nIndustry Demand">
+				<eqn>(PV_Technology_Production_Capacity*1000000000)*PV_Technology_material_intensity/1000</eqn>
+				<non_negative/>
+				<units>Metric Tons/Year</units>
+			</flow>
+			<flow name="Yearly NonPV\nIndustry Demand\nAnnual Growth">
+				<eqn>Annual_Non_PV_Demand*CGROWTH(NPVGR)</eqn>
+				<non_negative/>
+				<units>Tons/year</units>
+			</flow>
+			<aux name="PV Technology\nProduction Capacity">
+				<eqn>Annual_PV_Deployment*PV_Technology_Market_Share/100</eqn>
+				<units>GWp</units>
+			</aux>
+			<stock name="Annual Non\nPV Demand">
+				<eqn>Current_nonPV_demand</eqn>
+				<inflow>Yearly_NonPV_Industry_Demand_Annual_Growth</inflow>
+				<non_negative/>
+				<units>Tons</units>
+			</stock>
+			<flow name="Material Production\nAnnual">
+				<eqn>0</eqn>
+				<non_negative/>
+				<units>Metric Tons/Year</units>
+			</flow>
+			<stock name="Material Production -\nCumulative">
+				<eqn>0</eqn>
+				<inflow>Material_Production_Annual</inflow>
+				<non_negative/>
+				<units>Metric Tons</units>
+			</stock>
+			<stock name="Material in the market\nCumulative">
+				<eqn>Global_Stocks_User_Input</eqn>
+				<inflow>&quot;Material_in_the_market_(positive)&quot;</inflow>
+				<outflow>&quot;Material_in_the_market_(negative)&quot;</outflow>
+				<non_negative/>
+				<units>Metric Tons</units>
+			</stock>
+			<flow name="Material in the\nmarket (positive)">
+				<eqn>IF (Material_Production_Annual-Annual_Material_Demand&lt;0) THEN (0) ELSE (Material_Production_Annual-Annual_Material_Demand)</eqn>
+				<non_negative/>
+				<units>Metric Tons/Year</units>
+			</flow>
+			<flow name="Material in the\nmarket (negative)">
+				<eqn>IF (Material_Production_Annual-Annual_Material_Demand&gt;0) THEN (0) ELSE (-Material_Production_Annual+Annual_Material_Demand)</eqn>
+				<non_negative/>
+				<units>Metric Tons/Year</units>
+			</flow>
+			<stock name="Cumulative PV\nTechnology Material Demand">
+				<eqn>0</eqn>
+				<inflow>Yearly_PV_Industry_Demand</inflow>
+				<units>Metric Tons</units>
+			</stock>
+			<aux name="Weibull PDF\nRegular Loss">
+				<dimensions>
+					<dim name="StudyPeriod"/>
+				</dimensions>
+				<element subscript="Y2023">
+					<eqn>0</eqn>
+				</element>
+				<element subscript="Y2024">
+					<eqn>1.14589e-8</eqn>
+				</element>
+				<element subscript="Y2025">
+					<eqn>4.6437e-7</eqn>
+				</element>
+				<element subscript="Y2026">
+					<eqn>0.0000037324</eqn>
+				</element>
+				<element subscript="Y2027">
+					<eqn>0.0000155503</eqn>
+				</element>
+				<element subscript="Y2028">
+					<eqn>0.0000458141</eqn>
+				</element>
+				<element subscript="Y2029">
+					<eqn>0.000109</eqn>
+				</element>
+				<element subscript="Y2030">
+					<eqn>0.000225416</eqn>
+				</element>
+				<element subscript="Y2031">
+					<eqn>0.000419991</eqn>
+				</element>
+				<element subscript="Y2032">
+					<eqn>0.000724122</eqn>
+				</element>
+				<element subscript="Y2033">
+					<eqn>0.001175012</eqn>
+				</element>
+				<element subscript="Y2034">
+					<eqn>0.001815758</eqn>
+				</element>
+				<element subscript="Y2035">
+					<eqn>0.002694991</eqn>
+				</element>
+				<element subscript="Y2036">
+					<eqn>0.0038661</eqn>
+				</element>
+				<element subscript="Y2037">
+					<eqn>0.005385871</eqn>
+				</element>
+				<element subscript="Y2038">
+					<eqn>0.007312366</eqn>
+				</element>
+				<element subscript="Y2039">
+					<eqn>0.00970182</eqn>
+				</element>
+				<element subscript="Y2040">
+					<eqn>0.012604341</eqn>
+				</element>
+				<element subscript="Y2041">
+					<eqn>0.016058261</eqn>
+				</element>
+				<element subscript="Y2042">
+					<eqn>0.020083043</eqn>
+				</element>
+				<element subscript="Y2043">
+					<eqn>0.024670873</eqn>
+				</element>
+				<element subscript="Y2044">
+					<eqn>0.029777319</eqn>
+				</element>
+				<element subscript="Y2045">
+					<eqn>0.035311818</eqn>
+				</element>
+				<element subscript="Y2046">
+					<eqn>0.041129281</eqn>
+				</element>
+				<element subscript="Y2047">
+					<eqn>0.047024564</eqn>
+				</element>
+				<element subscript="Y2048">
+					<eqn>0.052732091</eqn>
+				</element>
+				<element subscript="Y2049">
+					<eqn>0.057933068</eqn>
+				</element>
+				<element subscript="Y2050">
+					<eqn>0.062272547</eqn>
+				</element>
+			</aux>
+			<flow name="Dismantled PV - per\nproduction phase">
+				<dimensions>
+					<dim name="StudyPeriod"/>
+				</dimensions>
+				<eqn>IF New_PV_Recycling_Estimation_Method =2 THEN
+(&quot;Recycling_-_Annual_PV&quot;*Weibull_PDF_Early_Loss) ELSE (
+IF New_PV_Recycling_Estimation_Method =3 THEN (&quot;Recycling_-_Annual_PV&quot;*Weibull_PDF_Regular_Loss) ELSE
+(DELAY(&quot;Recycling_-_Annual_PV&quot;, 25, 0)))</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="Annual Dismantled\nPV">
+				<eqn>IF New_PV_Recycling_Estimation_Method =1 THEN (DELAY(&quot;Dismantled_PV_-_per_production_phase&quot;[Y2023], Average_PV_Lifetime-1, 0)) ELSE (SUM(&quot;Dismantled_PV_-_per_production_phase&quot;))</eqn>
+			</aux>
+			<aux name="Annual Material Surplus">
+				<eqn>Material_Production_Annual-Annual_Material_Demand</eqn>
+			</aux>
+			<flow name="Actual PV\nTechnology Production">
+				<eqn>IF(Material_in_the_market_Cumulative&gt;Annual_Material_Demand) THEN (PV_Technology_Production_Capacity) ELSE (
+IF((Material_Production_Annual-Annual_Non_PV_Demand)*1000/PV_Technology_material_intensity&gt;PV_Technology_Production_Capacity) THEN (PV_Technology_Production_Capacity) ELSE ((Material_Production_Annual-Annual_Non_PV_Demand)*1000/(PV_Technology_material_intensity/1000000000)))</eqn>
+				<non_negative/>
+				<units>GWp/year</units>
+			</flow>
+			<stock name="Cumulative PV Technology Produced">
+				<eqn>0</eqn>
+				<inflow>Actual_PV_Technology_Production</inflow>
+				<non_negative/>
+				<units>GWp</units>
+			</stock>
+			<flow name="Actual Annual\nMaterial Demand">
+				<eqn>(Actual_PV_Technology_Production)*(1000000000)*PV_Technology_material_intensity/1000</eqn>
+				<non_negative/>
+				<units>Metric Tons/year</units>
+			</flow>
+			<stock name="Cumulative Material\nDemand (Actual)">
+				<eqn>0</eqn>
+				<inflow>Actual_Annual_Material_Demand</inflow>
+				<non_negative/>
+				<units>Metric Tons</units>
+			</stock>
+			<aux name="Recycling -\nAnnual PV">
+				<dimensions>
+					<dim name="StudyPeriod"/>
+				</dimensions>
+				<element subscript="Y2023">
+					<eqn>DELAY (Actual_Annual_Material_Demand, 0, 0)</eqn>
+				</element>
+				<element subscript="Y2024">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 1, 0)</eqn>
+				</element>
+				<element subscript="Y2025">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 2, 0)</eqn>
+				</element>
+				<element subscript="Y2026">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 3, 0)</eqn>
+				</element>
+				<element subscript="Y2027">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 4, 0)</eqn>
+				</element>
+				<element subscript="Y2028">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 5, 0)</eqn>
+				</element>
+				<element subscript="Y2029">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 6, 0)</eqn>
+				</element>
+				<element subscript="Y2030">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 7, 0)</eqn>
+				</element>
+				<element subscript="Y2031">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 8, 0)</eqn>
+				</element>
+				<element subscript="Y2032">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 9, 0)</eqn>
+				</element>
+				<element subscript="Y2033">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 10, 0)</eqn>
+				</element>
+				<element subscript="Y2034">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 11, 0)</eqn>
+				</element>
+				<element subscript="Y2035">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 12, 0)</eqn>
+				</element>
+				<element subscript="Y2036">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 13, 0)</eqn>
+				</element>
+				<element subscript="Y2037">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 14, 0)</eqn>
+				</element>
+				<element subscript="Y2038">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 15, 0)</eqn>
+				</element>
+				<element subscript="Y2039">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 16, 0)</eqn>
+				</element>
+				<element subscript="Y2040">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 17, 0)</eqn>
+				</element>
+				<element subscript="Y2041">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 18, 0)</eqn>
+				</element>
+				<element subscript="Y2042">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 19, 0)</eqn>
+				</element>
+				<element subscript="Y2043">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 20, 0)</eqn>
+				</element>
+				<element subscript="Y2044">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 21, 0)</eqn>
+				</element>
+				<element subscript="Y2045">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 22, 0)</eqn>
+				</element>
+				<element subscript="Y2046">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 23, 0)</eqn>
+				</element>
+				<element subscript="Y2047">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 24, 0)</eqn>
+				</element>
+				<element subscript="Y2048">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 25, 0)</eqn>
+				</element>
+				<element subscript="Y2049">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 26, 0)</eqn>
+				</element>
+				<element subscript="Y2050">
+					<eqn>DELAY(Actual_Annual_Material_Demand, 27, 0)</eqn>
+				</element>
+			</aux>
+			<aux name="NPVGR">
+				<eqn>3.96</eqn>
+			</aux>
+			<aux name="New PV Recycling\nEstimation Method">
+				<doc>1: Fixed Lifetime
+2: Weibull Early Loss
+3: Weibull Regular Loss</doc>
+				<eqn>1</eqn>
+			</aux>
+			<aux name="Weibull PDF\nEarly Loss">
+				<dimensions>
+					<dim name="StudyPeriod"/>
+				</dimensions>
+				<element subscript="Y2023">
+					<eqn>0</eqn>
+				</element>
+				<element subscript="Y2024">
+					<eqn> 0.0002079</eqn>
+				</element>
+				<element subscript="Y2025">
+					<eqn> 0.0009616</eqn>
+				</element>
+				<element subscript="Y2026">
+					<eqn> 0.0020405</eqn>
+				</element>
+				<element subscript="Y2027">
+					<eqn> 0.0033548</eqn>
+				</element>
+				<element subscript="Y2028">
+					<eqn> 0.0048570</eqn>
+				</element>
+				<element subscript="Y2029">
+					<eqn> 0.0065125</eqn>
+				</element>
+				<element subscript="Y2030">
+					<eqn> 0.0082919</eqn>
+				</element>
+				<element subscript="Y2031">
+					<eqn> 0.0101678</eqn>
+				</element>
+				<element subscript="Y2032">
+					<eqn> 0.0121142</eqn>
+				</element>
+				<element subscript="Y2033">
+					<eqn> 0.0141052</eqn>
+				</element>
+				<element subscript="Y2034">
+					<eqn> 0.0161150</eqn>
+				</element>
+				<element subscript="Y2035">
+					<eqn> 0.0181181</eqn>
+				</element>
+				<element subscript="Y2036">
+					<eqn> 0.0200890</eqn>
+				</element>
+				<element subscript="Y2037">
+					<eqn> 0.0220029</eqn>
+				</element>
+				<element subscript="Y2038">
+					<eqn> 0.0238356</eqn>
+				</element>
+				<element subscript="Y2039">
+					<eqn> 0.0255640</eqn>
+				</element>
+				<element subscript="Y2040">
+					<eqn> 0.0271664</eqn>
+				</element>
+				<element subscript="Y2041">
+					<eqn> 0.0286230</eqn>
+				</element>
+				<element subscript="Y2042">
+					<eqn> 0.0299159</eqn>
+				</element>
+				<element subscript="Y2043">
+					<eqn> 0.0310297</eqn>
+				</element>
+				<element subscript="Y2044">
+					<eqn> 0.0319518</eqn>
+				</element>
+				<element subscript="Y2045">
+					<eqn> 0.0326725</eqn>
+				</element>
+				<element subscript="Y2046">
+					<eqn> 0.0331850</eqn>
+				</element>
+				<element subscript="Y2047">
+					<eqn> 0.0334859</eqn>
+				</element>
+				<element subscript="Y2048">
+					<eqn> 0.0335750</eqn>
+				</element>
+				<element subscript="Y2049">
+					<eqn> 0.0334553</eqn>
+				</element>
+				<element subscript="Y2050">
+					<eqn> 0.0331330</eqn>
+				</element>
+			</aux>
+			<aux name="PV Technology\nMarket Share">
+				<eqn>TIME</eqn>
+				<gf>
+					<xscale min="2023" max="2050"/>
+					<yscale min="0" max="100"/>
+					<ypts>10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10</ypts>
+				</gf>
+				<units>%</units>
+			</aux>
+			<aux name="PV Technology material intensity">
+				<eqn>TIME</eqn>
+				<gf>
+					<xscale min="2023" max="2050"/>
+					<yscale min="0" max="100"/>
+					<ypts>0.7,2.1,4.6,6.8,6.8,6.8,6.8,5.3,3,3,3,3,4.65,5.0625,5.475,5.8875,6.3,6.7125,7.125,7.5375,7.95,8.3625,8.775,9.1875,9.6,0,0,0</ypts>
+				</gf>
+				<units>kg/W</units>
+			</aux>
+			<aux name="Average PV\nLifetime">
+				<eqn>25</eqn>
+			</aux>
+			<aux name="Global Stocks\nUser Input">
+				<eqn> 7431.73</eqn>
+			</aux>
+			<aux name="Current nonPV\ndemand">
+				<eqn>348</eqn>
+			</aux>
+			<aux name="Price\nThreshold">
+				<eqn>0.33</eqn>
+			</aux>
+			<flow name="Annual Capacity\nIncremental">
+				<eqn>Counter_Result+Condition</eqn>
+				<non_negative/>
+				<units>GWp/year</units>
+			</flow>
+			<flow name="Dummy\nCounter">
+				<eqn>IF(Condition=0) THEN(1) ELSE(0)</eqn>
+				<non_negative/>
+				<units>Per Year</units>
+			</flow>
+			<stock name="Annual PV\nDeployment">
+				<eqn>IF PV_Future_Production_User_Input = 1 THEN (Current_Annual_PV_Deployment) ELSE (Current_Annual_PV_Deployment_User_Input)</eqn>
+				<inflow>Annual_Capacity_Incremental</inflow>
+				<units>GWp</units>
+			</stock>
+			<stock name="Counter\nResult">
+				<eqn>1</eqn>
+				<inflow>Dummy_Counter</inflow>
+				<non_negative/>
+				<units>unitless</units>
+			</stock>
+			<aux name="Current Annual\nPV Deployment User Input">
+				<eqn>13.56</eqn>
+			</aux>
+			<aux name="Current Annual\nPV Deployment">
+				<eqn>13.56</eqn>
+			</aux>
+			<aux name="Condition">
+				<eqn>IF((PV_Technology_Production_Capacity&gt;Price_Threshold) OR (Actual_PV_Technology_Production&lt;PV_Technology_Production_Capacity)) THEN(1) ELSE(0)</eqn>
+			</aux>
+		</variables>
+		<views>
+			<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+				<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:loop_indicator color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<numeric_display color="blue" background="white" font_size="9pt" border_width="thin" border_style="solid" isee:transparent="false" isee:show_divider="true" isee:show_bounding_box="true" label_side="left"/>
+				<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+					<isee:series_styles>
+						<isee:series_style color="blue" thickness="1"/>
+						<isee:series_style color="red" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="fuchsia" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="#008F44" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#FF7F00" thickness="1"/>
+						<isee:series_style color="#7F00FF" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="#0CA0FF" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="lime" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#FF007F" thickness="1"/>
+						<isee:series_style color="aqua" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="#F586FF" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="black" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#C8C8C8" thickness="1"/>
+					</isee:series_styles>
+				</graph>
+				<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				<button color="black" background="#E0E0E0" font_size="12pt" border_width="thin" border_style="solid" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595"/>
+				<isee:annotation color="black" background="#E0E0E0" font_size="12pt" border_width="thin" border_style="solid" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595" popup_corner_radius="0" popup_background_color="#FFFECF"/>
+				<slider color="#66CC66" background="#E0E0E0" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" vertical="false" isee:fancy_appearance="false" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:dual_slider color="#66CC66" background="silver" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:sim_speed_slider color="black" background="white"/>
+				<isee:time_slider color="#E95F74" background="silver"/>
+				<isee:pie_input color="black" background="white" font_size="12pt" legend_position="bottom" isee:transparent="false"/>
+				<knob color="#66CC66" background="#E0E0E0" font_size="12pt" label_side="bottom" wrap_title="true"/>
+				<numeric_input color="black" background="#E0E0E0" font_size="12pt" label_side="left" wrap_title="true" input_expands="false" input_width="100"/>
+				<switch color="black" background="#E0E0E0" font_size="12pt" label_side="top" wrap_title="true" isee:appearance="switch" isee:on_color="green"/>
+				<options color="black" background="white" appearance="radio-buttons" arrangement="vertical"/>
+				<graphical_input color="black" background="#E0E0E0" font_size="12pt" isee:show_hover_tip="true"/>
+				<group_input color="black" background="#E0E0E0" font_size="12pt"/>
+				<lamp color="black" background="white" font_size="9pt"/>
+				<gauge color="black" background="white" font_size="9pt" needle_color="#F09F72" bar_color="#EEEEEE" bar_progress_color="black" appearance="radial" num_major_ticks="11" num_minor_ticks="11" show_numeric_value="true"/>
+				<isee:spatial_map color="black" background="white" font_size="12pt"/>
+				<isee:animation_object color="black" background="white" font_size="12pt"/>
+				<isee:navigation_widget color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" padding="6 8" border_color="#999999" border_width="thin" border_style="solid" item_spacing="6" appearance="tabs" corner_radius="4" selected_item_color="black" selected_item_background="white" item_background="#DDDDDD" transparent_bg="false"/>
+				<isee:shape color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid" opacity="1" transparent_background="true" corner_radius="1"/>
+				<isee:selector color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:iframe color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid"/>
+				<isee:financial_table color="black" background="#E0E0E0" text_align="right" font_size="12pt" hide_border="false" auto_fit="true" first_column_width="250" other_column_width="100" header_font_style="normal" header_font_weight="bold" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="14pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+			</style>
+			<view isee:show_pages="false" background="white" page_width="1056" page_height="816" isee:page_cols="4" isee:page_rows="5" isee:scroll_x="1190" isee:scroll_y="295" zoom="80" isee:popup_graphs_are_comparative="true" isee:enable_non_negative_highlights="false" type="stock_flow">
+				<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+					<stock color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="45" height="35"/>
+					</stock>
+					<flow color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom">
+						<shape type="circle" radius="18"/>
+					</flow>
+					<isee:placeholder color="#228B22" background="white" font_color="#228B22" font_size="9pt" label_side="bottom"/>
+					<module color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="55" height="45"/>
+					</module>
+					<aux color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom">
+						<shape type="circle" radius="18"/>
+					</aux>
+					<group color="red" background="white" font_color="red" font_size="9pt"/>
+					<connector color="#FF007F" background="white" font_color="#FF007F" font_size="9pt" isee:thickness="1"/>
+					<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+					<isee:loop_indicator color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+					<numeric_display color="blue" background="white" font_size="9pt" border_width="thin" border_style="solid" isee:transparent="false" isee:show_divider="true" isee:show_bounding_box="true" label_side="left"/>
+					<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+						<isee:series_styles>
+							<isee:series_style color="blue" thickness="1"/>
+							<isee:series_style color="red" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="fuchsia" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="#008F44" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#FF7F00" thickness="1"/>
+							<isee:series_style color="#7F00FF" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="#0CA0FF" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="lime" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#FF007F" thickness="1"/>
+							<isee:series_style color="aqua" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="#F586FF" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="black" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#C8C8C8" thickness="1"/>
+						</isee:series_styles>
+					</graph>
+					<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				</style>
+				<aux color="black" font_color="black" label_angle="161.114" x="1617.33" y="802" name="Annual Material\nDemand"/>
+				<flow color="black" font_color="black" x="1743.25" y="737.667" name="Yearly PV\nIndustry Demand">
+					<pts>
+						<pt x="1680.33" y="737.667"/>
+						<pt x="1806.17" y="737.667"/>
+					</pts>
+				</flow>
+				<flow color="black" font_color="black" label_side="bottom" x="1728.25" y="874.75" name="Yearly NonPV\nIndustry Demand\nAnnual Growth">
+					<pts>
+						<pt x="1681.58" y="874.75"/>
+						<pt x="1774.92" y="874.75"/>
+					</pts>
+				</flow>
+				<connector uid="70" color="black" font_color="black" angle="187.158">
+					<from>Yearly_PV_Industry_Demand</from>
+					<to>Annual_Material_Demand</to>
+				</connector>
+				<aux color="black" font_color="black" label_side="bottom" x="1899.44" y="791.278" name="PV Technology\nProduction Capacity"/>
+				<connector uid="81" color="black" font_color="black" angle="184.345">
+					<from>PV_Technology_Production_Capacity</from>
+					<to>Yearly_PV_Industry_Demand</to>
+				</connector>
+				<stock color="black" font_color="black" label_side="bottom" x="1774.92" y="864.75" width="31.25" height="20" name="Annual Non\nPV Demand"/>
+				<flow color="#FFAA00" font_color="#FFAA00" label_side="bottom" x="1414.08" y="800" name="Material Production\nAnnual">
+					<pts>
+						<pt x="1368.33" y="800"/>
+						<pt x="1459.83" y="800"/>
+					</pts>
+				</flow>
+				<stock color="#FFAA00" font_color="#FFAA00" label_angle="70.2302" x="1459.83" y="790.5" width="29" height="19" name="Material Production -\nCumulative"/>
+				<connector uid="108" angle="285.614">
+					<from>Material_Production_Annual</from>
+					<to>&quot;Material_in_the_market_(positive)&quot;</to>
+				</connector>
+				<stock label_side="top" x="1456.33" y="921.75" width="36" height="16" name="Material in the market\nCumulative"/>
+				<flow x="1404.28" y="927.778" name="Material in the\nmarket (positive)">
+					<pts>
+						<pt x="1352.22" y="927.778"/>
+						<pt x="1456.33" y="927.778"/>
+					</pts>
+				</flow>
+				<connector uid="74" angle="173.918">
+					<from>Annual_Material_Demand</from>
+					<to>&quot;Material_in_the_market_(positive)&quot;</to>
+				</connector>
+				<flow x="1537.78" y="926.667" name="Material in the\nmarket (negative)">
+					<pts>
+						<pt x="1492.33" y="926.667"/>
+						<pt x="1607.22" y="926.667"/>
+					</pts>
+				</flow>
+				<connector uid="113" angle="346.171">
+					<from>Material_Production_Annual</from>
+					<to>&quot;Material_in_the_market_(negative)&quot;</to>
+				</connector>
+				<connector uid="114" angle="201.277">
+					<from>Annual_Material_Demand</from>
+					<to>&quot;Material_in_the_market_(negative)&quot;</to>
+				</connector>
+				<stock color="black" font_color="black" label_side="top" x="1806.17" y="729.334" width="25.8333" height="16.6667" name="Cumulative PV\nTechnology Material Demand"/>
+				<aux color="black" font_color="black" label_side="left" label_angle="135" x="1668.81" y="235.25" name="Weibull PDF\nRegular Loss"/>
+				<flow color="black" font_color="black" label_side="top" x="1750.17" y="320.75" name="Dismantled PV - per\nproduction phase">
+					<pts>
+						<pt x="1670.81" y="320.75"/>
+						<pt x="1841.53" y="320.75"/>
+					</pts>
+				</flow>
+				<connector uid="236" color="black" font_color="black" angle="340.172">
+					<from>Weibull_PDF_Regular_Loss</from>
+					<to>&quot;Dismantled_PV_-_per_production_phase&quot;</to>
+				</connector>
+				<aux label_side="top" x="1404.28" y="197.417" name="Annual Dismantled\nPV"/>
+				<aux x="1474.33" y="1066.33" name="Annual Material Surplus"/>
+				<connector uid="239" angle="204.207">
+					<from>Material_Production_Annual</from>
+					<to>Annual_Material_Surplus</to>
+				</connector>
+				<connector uid="240" angle="297.367">
+					<from>Annual_Material_Demand</from>
+					<to>Annual_Material_Surplus</to>
+				</connector>
+				<connector uid="262" angle="141.254">
+					<from>Annual_Non_PV_Demand</from>
+					<to>Annual_Material_Demand</to>
+				</connector>
+				<connector uid="261" angle="201.6">
+					<from>Annual_Non_PV_Demand</from>
+					<to>Yearly_NonPV_Industry_Demand_Annual_Growth</to>
+				</connector>
+				<flow x="1504.53" y="686.667" name="Actual PV\nTechnology Production">
+					<pts>
+						<pt x="1422.78" y="686.667"/>
+						<pt x="1586.27" y="686.667"/>
+					</pts>
+				</flow>
+				<stock label_side="bottom" x="1586.27" y="677.722" width="33" height="19" name="Cumulative PV Technology Produced"/>
+				<flow label_side="bottom" x="1872.41" y="528.889" name="Actual Annual\nMaterial Demand">
+					<pts>
+						<pt x="1796.33" y="528.889"/>
+						<pt x="1948.49" y="528.889"/>
+					</pts>
+				</flow>
+				<connector uid="317" angle="51.4431">
+					<from>Actual_PV_Technology_Production</from>
+					<to>Actual_Annual_Material_Demand</to>
+				</connector>
+				<stock label_side="bottom" x="1948.49" y="520.382" width="28.8961" height="17.013" name="Cumulative Material\nDemand (Actual)"/>
+				<connector uid="319" angle="313.947">
+					<from>
+						<alias uid="320"/>
+					</from>
+					<to>Actual_PV_Technology_Production</to>
+				</connector>
+				<connector uid="326" angle="51.4082">
+					<from>Material_Production_Annual</from>
+					<to>Actual_PV_Technology_Production</to>
+				</connector>
+				<connector uid="327" angle="63.5641">
+					<from>Material_in_the_market_Cumulative</from>
+					<to>Actual_PV_Technology_Production</to>
+				</connector>
+				<connector uid="328" angle="152.688">
+					<from>Annual_Material_Demand</from>
+					<to>Actual_PV_Technology_Production</to>
+				</connector>
+				<connector uid="329" angle="134.325">
+					<from>Annual_Non_PV_Demand</from>
+					<to>Actual_PV_Technology_Production</to>
+				</connector>
+				<aux color="black" font_color="black" label_side="left" x="1750.17" y="379.167" name="Recycling -\nAnnual PV"/>
+				<connector uid="336" color="black" font_color="black" angle="90">
+					<from>&quot;Recycling_-_Annual_PV&quot;</from>
+					<to>&quot;Dismantled_PV_-_per_production_phase&quot;</to>
+				</connector>
+				<aux x="1671" y="947.75" name="NPVGR"/>
+				<connector uid="372" angle="71.8008">
+					<from>NPVGR</from>
+					<to>Yearly_NonPV_Industry_Demand_Annual_Growth</to>
+				</connector>
+				<aux color="red" font_color="red" label_side="bottom" x="1555.78" y="287.5" name="New PV Recycling\nEstimation Method"/>
+				<aux color="black" font_color="black" label_side="left" label_angle="135" x="1668.81" y="191.5" name="Weibull PDF\nEarly Loss"/>
+				<connector uid="415" angle="335.078">
+					<from>Weibull_PDF_Early_Loss</from>
+					<to>&quot;Dismantled_PV_-_per_production_phase&quot;</to>
+				</connector>
+				<connector uid="416" angle="7.9202">
+					<from>New_PV_Recycling_Estimation_Method</from>
+					<to>&quot;Dismantled_PV_-_per_production_phase&quot;</to>
+				</connector>
+				<aux label_side="right" label_angle="45" x="1899.44" y="737.667" name="PV Technology\nMarket Share"/>
+				<connector uid="418" angle="273.715">
+					<from>PV_Technology_Market_Share</from>
+					<to>PV_Technology_Production_Capacity</to>
+				</connector>
+				<aux label_side="right" label_angle="45" x="1710.25" y="682.125" name="PV Technology material intensity"/>
+				<connector uid="419" angle="326.923">
+					<from>PV_Technology_material_intensity</from>
+					<to>Yearly_PV_Industry_Demand</to>
+				</connector>
+				<connector uid="420" angle="155.248">
+					<from>PV_Technology_material_intensity</from>
+					<to>Actual_PV_Technology_Production</to>
+				</connector>
+				<connector uid="421" angle="74.6004">
+					<from>PV_Technology_material_intensity</from>
+					<to>Actual_Annual_Material_Demand</to>
+				</connector>
+				<connector uid="482" angle="167.71">
+					<from>New_PV_Recycling_Estimation_Method</from>
+					<to>Annual_Dismantled_PV</to>
+				</connector>
+				<connector uid="330" angle="168.075">
+					<from>Actual_Annual_Material_Demand</from>
+					<to>&quot;Recycling_-_Annual_PV&quot;</to>
+				</connector>
+				<connector uid="237" angle="144.826">
+					<from>&quot;Dismantled_PV_-_per_production_phase&quot;</from>
+					<to>Annual_Dismantled_PV</to>
+				</connector>
+				<aux x="1555.78" y="355" name="Average PV\nLifetime"/>
+				<connector uid="483" angle="151.39">
+					<from>Average_PV_Lifetime</from>
+					<to>Annual_Dismantled_PV</to>
+				</connector>
+				<aux x="1474.33" y="964.976" name="Global Stocks\nUser Input"/>
+				<aux x="1790.55" y="933" name="Current nonPV\ndemand"/>
+				<aux label_side="left" x="1951.41" y="948.357" width="19.2857" height="19.2857" name="Price\nThreshold"/>
+				<flow label_side="right" label_angle="45" x="2087.21" y="791.667" name="Annual Capacity\nIncremental">
+					<pts>
+						<pt x="2139.44" y="791.667"/>
+						<pt x="2034.97" y="791.667"/>
+					</pts>
+				</flow>
+				<flow label_side="top" x="2266.41" y="792.314" name="Dummy\nCounter">
+					<pts>
+						<pt x="2304.37" y="792.314"/>
+						<pt x="2228.44" y="792.314"/>
+					</pts>
+				</flow>
+				<stock x="2012.47" y="782.528" width="22.5" height="17.5" name="Annual PV\nDeployment"/>
+				<connector uid="231" angle="180">
+					<from>Annual_PV_Deployment</from>
+					<to>PV_Technology_Production_Capacity</to>
+				</connector>
+				<stock x="2202.73" y="783.028" width="25.7143" height="18.5714" name="Counter\nResult"/>
+				<connector uid="269" angle="203.014">
+					<from>Counter_Result</from>
+					<to>Annual_Capacity_Incremental</to>
+				</connector>
+				<aux color="black" font_color="black" label_side="top" x="2031.5" y="682.125" name="Current Annual\nPV Deployment User Input"/>
+				<aux color="black" font_color="black" label_side="top" x="2031.5" y="737.667" name="Current Annual\nPV Deployment"/>
+				<aux label_side="right" label_angle="315" x="2085.12" y="958" name="Condition"/>
+				<connector uid="360" angle="347.173">
+					<from>
+						<alias uid="361"/>
+					</from>
+					<to>Condition</to>
+				</connector>
+				<connector uid="358" angle="4.58397">
+					<from>
+						<alias uid="359"/>
+					</from>
+					<to>Condition</to>
+				</connector>
+				<connector uid="233" angle="89.2807">
+					<from>Condition</from>
+					<to>Annual_Capacity_Incremental</to>
+				</connector>
+				<connector uid="267" angle="357.293">
+					<from>Condition</from>
+					<to>Dummy_Counter</to>
+				</connector>
+				<connector uid="183" angle="0">
+					<from>Price_Threshold</from>
+					<to>Condition</to>
+				</connector>
+				<alias color="black" font_style="italic" font_color="black" label_side="top" uid="320" x="1438.33" y="624.25" width="18" height="18">
+					<of>PV_Technology_Production_Capacity</of>
+				</alias>
+				<alias color="black" font_style="italic" font_color="black" label_side="left" uid="361" x="1952.05" y="920.75" width="18" height="18">
+					<of>PV_Technology_Production_Capacity</of>
+				</alias>
+				<alias font_style="italic" label_side="left" uid="359" x="1952.75" y="974.976" width="18" height="18">
+					<of>Actual_PV_Technology_Production</of>
+				</alias>
+			</view>
+		</views>
+	</model>
+</xmile>
+
