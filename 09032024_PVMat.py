@@ -2127,8 +2127,8 @@ def global_stocks_user_input():
     comp_subtype="Normal",
 )
 def weibull_pdf_regular_loss_expv():
-    value = xr.DataArray(np.nan, {"PVDev": _subscript_dict["PVDev"]}, ["PVDev"])
-    value.loc[["Y2023"]] = 0
+    value = xr.DataArray(np.nan, {"StudyPeriod": _subscript_dict["StudyPeriod"]},
+        ["StudyPeriod"])
     value.loc[["Y2024"]] = 1.14589e-08
     value.loc[["Y2025"]] = 4.6437e-07
     value.loc[["Y2026"]] = 3.7324e-06
@@ -2181,7 +2181,15 @@ def annual_dismantled_existing_pv():
         lambda: _delayfixed_annual_dismantled_existing_pv(),
         lambda: sum(dismantled_expv(), dim=[]),
     )
-
+    
+"""
+Previous
+if_then_else(
+        existing_pv_recycling_estimation_method() == 1,
+        lambda: _delayfixed_annual_dismantled_existing_pv(),
+        lambda: sum(dismantled_expv(), dim=[]),
+    )
+"""
 
 _delayfixed_annual_dismantled_existing_pv = DelayFixed(
     lambda: float(dismantled_expv().loc["Y2023"]),
@@ -2360,7 +2368,7 @@ def expv_installed():
     value.loc[["Y2027"]] = 0
     value.loc[["Y2028"]] = 0
     value.loc[["Y2029"]] = 0
-    value.loc[["Y2030"]] = 0
+    value.loc[["Y2030"]] = 50
     value.loc[["Y2031"]] = 0
     value.loc[["Y2032"]] = 0
     value.loc[["Y2033"]] = 0
@@ -2631,7 +2639,7 @@ def annual_recycled_metalx():
 )
 def yearly_pv_industry_demand():
     return np.maximum(
-        (pv_technology_production_capacity() * 1000000000)
+        (pv_technology_production_capacity())
         * pv_technology_material_intensity()
         / 1000,
         0,
@@ -3407,7 +3415,10 @@ def dummy_counter():
     },
 )
 def actual_pv_technology_production():
-    return np.maximum(
+    return pv_technology_production_capacity()
+"""
+Previous version
+    np.maximum(
         if_then_else(
             material_in_the_market_cumulative() > annual_material_demand(),
             lambda: pv_technology_production_capacity(),
@@ -3419,12 +3430,12 @@ def actual_pv_technology_production():
                 lambda: pv_technology_production_capacity(),
                 lambda: (material_production_annual() - annual_non_pv_demand())
                 * 1000
-                / (pv_technology_material_intensity() / 1000000000),
+                / (pv_technology_material_intensity()),
             ),
         ),
         0,
     )
-
+"""
 
 @component.add(
     name="Actual Annual Material Demand",
@@ -3439,7 +3450,6 @@ def actual_pv_technology_production():
 def actual_annual_material_demand():
     return np.maximum(
         actual_pv_technology_production()
-        * 1000000000
         * pv_technology_material_intensity()
         / 1000,
         0,
@@ -3845,7 +3855,11 @@ _integ_updated_pv_technology_asp = NonNegativeInteg(
     },
 )
 def annual_pv_deployment():
-    return _integ_annual_pv_deployment()
+    return if_then_else(
+        pv_future_production_user_input() == 1,
+        lambda: current_annual_pv_deployment(),
+        lambda: current_annual_pv_deployment_user_input(),
+    )
 
 
 _integ_annual_pv_deployment = Integ(
