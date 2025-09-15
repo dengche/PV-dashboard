@@ -86,7 +86,9 @@ if "project_final_year" not in st.session_state.input:
 if "user_input" not in st.session_state.input:
     st.session_state.input["user_input"] = 1
 if "scenario" not in st.session_state.input:
-    st.session_state.input["scenario"] = "Tellurium Availability for CdTe - High Demand Scenario"
+    st.session_state.input["scenario"] = "Tellurium Availability for CdTe - for Homework"
+if "scenario_option" not in st.session_state.input:
+    st.session_state.input["scenario_option"] = 1
 
 # page 2 default input 09262024
 if "supply_option" not in st.session_state.input:
@@ -122,11 +124,11 @@ if "newpv_lifetime_option" not in st.session_state.input:
 if "newpv_panel_lifetime" not in st.session_state.input:
     st.session_state.input["newpv_panel_lifetime"] = 25
 if "newpv_recycling_efficiency" not in st.session_state.input:
-    st.session_state.input["newpv_recycling_efficiency"] = 0
+    st.session_state.input["newpv_recycling_efficiency"] = 90
 if "newpv_recycling_collection_efficiency" not in st.session_state.input:
-    st.session_state.input["newpv_recycling_collection_efficiency"] = 0
+    st.session_state.input["newpv_recycling_collection_efficiency"] = 90
 if "newpv_percentage_panels_recycled" not in st.session_state.input:
-    st.session_state.input["newpv_percentage_panels_recycled"] = 0
+    st.session_state.input["newpv_percentage_panels_recycled"] = 50
 if "rec_cal_method" not in st.session_state.input:
     st.session_state.input["rec_cal_method"] = 1
 if "num_pv_years" not in st.session_state.input:
@@ -287,18 +289,23 @@ if page == "Project Description":
 
     if selected_use_option == "I want to use an existing analysis":
         user_input = 1
-        baseline_options = ["Tellurium Availability for CdTe - High Demand Scenario", "Tellurium Availability for CdTe - Business-as-Usual Scenario","Tellurium Availability for CdTe - Low Demand Scenario"]
+        baseline_options = ["Tellurium Availability for CdTe - for Homework"]
+        #baseline_options = ["Tellurium Availability for CdTe - High Demand Scenario", "Tellurium Availability for CdTe - Business-as-Usual Scenario","Tellurium Availability for CdTe - Low Demand Scenario"]
         ind = baseline_options.index(st.session_state.input["scenario"])
+        scenario_option = 1
         selected_supply_option = st.selectbox("Select from the available analyses", baseline_options)
         project_pv_technology = st.text_input("PV Technology*",value="CdTe",disabled=True)
         project_target_metal = st.text_input("Target metal*",value="Tellurium",disabled=True)
+        project_starting_year= st.number_input("Project timeline - starting year*",value=2030,disabled=True)
+        project_final_year = st.number_input("Project timeline - final year*", min_value=2035, disabled=True)
     elif selected_use_option == "I want to create my own scenario":
         user_input = 0
         selected_supply_option = "none"
+        scenario_option = 2
         project_pv_technology = st.text_input("PV Technology*", value=st.session_state.input["project_PV_technology"])
         project_target_metal = st.text_input("Target metal*", value=st.session_state.input["project_target_metal"])
-    project_starting_year= st.number_input("Project timeline - starting year*",min_value=2023, step=1, value=st.session_state.input["project_starting_year"])
-    project_final_year = st.number_input("Project timeline - final year*", min_value=2024, step=1, value=st.session_state.input["project_final_year"])
+        project_starting_year= st.number_input("Project timeline - starting year*",min_value=2023, step=1, value=st.session_state.input["project_starting_year"])
+        project_final_year = st.number_input("Project timeline - final year*", min_value=2024, step=1, value=st.session_state.input["project_final_year"])
     
     project_description = st.text_area("Description*", height=200, value=st.session_state.input["project_description"])
 
@@ -319,8 +326,10 @@ if page == "Project Description":
             st.session_state.input["project_final_year"] = project_final_year
             st.session_state.input["user_input"] = user_input
             st.session_state.input["scenario"] = selected_supply_option
+            st.session_state.input["scenario_option"] = scenario_option 
             st.session_state.save1 = True
             st.write(f'<p style="color:red; font-size:18px;">Data saved</p>',unsafe_allow_html=True)
+                
         else:
             st.markdown(f'<p style="color:red;font-weight:bold">Please enter the appropriate project timeline and try again</p>', unsafe_allow_html=True)
         
@@ -333,7 +342,15 @@ if page == "Material Supply":
     # Add content for Material Supply page
 
 #---------------------------------------------------------------------------
-    st.subheader("Direct Mining")
+    col1,col2 = st.columns([1,1])   
+    col1.markdown("<h2 style='font-size:28px;'>Direct Mining</h2>", unsafe_allow_html=True)
+    col2.text("")
+    if col2.button("**Note**",key="Direct Mining"):
+        st.markdown(
+                    """
+                    <span style="font-size: 18px;">**Note**: This section will calculate the material flow from direct mining.
+                    <br>**Variables**: Annual production, Year for production
+                    """,unsafe_allow_html=True)
     # Add content for Subsection 1
     supply_options = ["Manually input annual production", "Calculate based on current production and future growth"]
     selected_supply_option = st.selectbox("Select Supply Calculation Method", supply_options,index=st.session_state.input["supply_option"]-1)
@@ -343,6 +360,13 @@ if page == "Material Supply":
         year_f = st.session_state.input["project_final_year"]
         if "mine_prod" not in st.session_state:
             st.session_state.mine_prod = np.zeros(year_f-year_s+1)
+        if st.session_state.input["scenario_option"] == 1:
+            st.session_state.mine_prod[0] = 107
+            st.session_state.mine_prod[1] = 107
+            st.session_state.mine_prod[2] = 22
+            st.session_state.mine_prod[3] = 22
+            st.session_state.mine_prod[4] = 22
+            st.session_state.mine_prod[5] = 22
         years_list = [f"{i}" for i in range(year_s, year_f+1)]
         year = st.selectbox("Select the year for input",years_list)
         i = years_list.index(year)
@@ -373,6 +397,7 @@ if page == "Material Supply":
     # Add content for Subsection 2
     bp_option = ["Manually input", "Use current production and average growth"]
     bp_global_reserves_option = st.selectbox("Select Calculation method", bp_option, key="bp_global_reserves_option1",index=st.session_state.input["bp_reserve_option"]-1)
+    
     if bp_global_reserves_option == "Use current production and average growth":
         bp_reserve_option = 2
         bp_current_supply = st.number_input("Enter the current supply from by-production", min_value=0.0, step=0.1, key="bp_current_supply1", value=float(st.session_state.input["bp_current_supply"]))
@@ -380,7 +405,9 @@ if page == "Material Supply":
 
     elif bp_global_reserves_option == "Manually input":
         bp_reserve_option = 1
-        num_bp_hosts = st.selectbox("Select the number of host metals (maximum 3)", [0,1,2,3],key="num_bp_hosts1", index=st.session_state.input["num_bp_hosts"])
+        if st.session_state.input["scenario_option"] == 1:
+            st.session_state.input["num_bp_hosts"] = 1
+        num_bp_hosts = st.selectbox("Select the number of host metals (maximum 3)", [0,1,2,3],key="num_bp_hosts1", index=st.session_state.input["num_bp_hosts"]) 
         if num_bp_hosts > 0 and num_bp_hosts !=  st.session_state.num_bp_hosts:
             st.session_state.num_bp_hosts = num_bp_hosts
         if num_bp_hosts > 0:
@@ -390,14 +417,21 @@ if page == "Material Supply":
             bp_annual_production_growth = np.zeros(3)
             bp_hitchhiker_content = np.zeros(3)
             bp_hitchhiker_recovery_efficiency = np.zeros(3)
+            if st.session_state.input["scenario_option"] == 1:
+                st.session_state.input["bp_host_metal_name"][0] = "Copper Anode"
+                st.session_state.input["bp_annual_production"][0] = 29000000
+                st.session_state.input["bp_global_reserves"][0] = 880000000
+                st.session_state.input["bp_annual_production_growth"][0] = 1.93
+                st.session_state.input["bp_hitchhiker_content"][0] = 0.00011
+                st.session_state.input["bp_hitchhiker_recovery_efficiency"][0] = 0.5
             for i in range(num_bp_hosts):
                 st.write(f"#### host metal {i+1}") 
                 bp_host_metal_name[i] = st.text_input(f"Enter the host metal {i+1} name",key=f"bp_host_metal_name{i}",value=st.session_state.input["bp_host_metal_name"][i])
                 bp_annual_production[i] = st.number_input(f"Enter the host metal {i+1} annual production (tonnes)",value=st.session_state.input["bp_annual_production"][i])
                 bp_global_reserves[i] = st.number_input(f"Enter the host metal {i+1} gloabl reserves (tonnes)", value=st.session_state.input["bp_global_reserves"][i])
                 bp_annual_production_growth[i] = st.number_input(f"Enter the host metal {i+1} annual production growth rate (%)", value=st.session_state.input["bp_annual_production_growth"][i])
-                bp_hitchhiker_content[i] = st.number_input(f"Enter the host metal {i+1} hitchhiker content (ppm)", value=st.session_state.input["bp_hitchhiker_content"][i])
-                bp_hitchhiker_recovery_efficiency[i] = st.number_input(f"Enter the host metal {i+1} hitchhiker recovery efficiency (%)", value=st.session_state.input["bp_hitchhiker_recovery_efficiency"][i])
+                bp_hitchhiker_content[i] = st.number_input(f"Enter the host metal {i+1} hitchhiker content (ppm)", value=st.session_state.input["bp_hitchhiker_content"][i]*1000000)
+                bp_hitchhiker_recovery_efficiency[i] = st.number_input(f"Enter the host metal {i+1} hitchhiker recovery efficiency (%)", value=st.session_state.input["bp_hitchhiker_recovery_efficiency"][i]*100)
         else:
             bp_host_metal_name = [0]*num_bp_hosts
             bp_annual_production = np.zeros(3)
@@ -514,7 +548,7 @@ if page == "Material Supply":
             st.session_state.pv_material_supply[y] = m_supply
         
         pv_annual_supply_data = pd.DataFrame({
-            "Year":years_list,
+            "Year":years_list2,
             #"start_year": start_year,
             #"end_year": end_year,
             "Annual Supply": st.session_state.pv_material_supply,
@@ -542,8 +576,8 @@ if page == "Material Supply":
             st.session_state.input["bp_annual_production"] = bp_annual_production
             st.session_state.input["bp_global_reserves"] = bp_global_reserves
             st.session_state.input["bp_annual_production_growth"] = bp_annual_production_growth
-            st.session_state.input["bp_hitchhiker_content"] = bp_hitchhiker_content
-            st.session_state.input["bp_hitchhiker_recovery_efficiency"] = bp_hitchhiker_recovery_efficiency
+            st.session_state.input["bp_hitchhiker_content"] = bp_hitchhiker_content/1000000
+            st.session_state.input["bp_hitchhiker_recovery_efficiency"] = bp_hitchhiker_recovery_efficiency/100
 
         st.session_state.input["newpv_lifetime_option"] = newpv_lifetime_option
         if newpv_lifetime_option == 1:
@@ -572,7 +606,7 @@ if page == "Material Supply":
         elif rec_cal_method == 2:
             st.session_state.input["pv_annual_supply_data"] = pv_annual_supply_data
             st.session_state.input["pv_annual_supply"] = st.session_state.pv_material_supply
-            
+        st.write(st.session_state.input["pv_capacity"])
         st.session_state.save2 = True
         st.write(f'<p style="color:red; font-size:18px;">Data saved</p>',unsafe_allow_html=True)
             
@@ -586,6 +620,10 @@ if page == "Material Demand":
     st.subheader("1- PV Demand")
     # Add content for Subsection 1
     st.markdown("<p style='font-family: Arial; font-size: 16pt; font-weight: bold;'> 1.1- Future PV Production (GWp)</p>", unsafe_allow_html=True)
+    if st.session_state.input["scenario_option"] == 1:
+        pv_options_ind = 1
+    else:
+        pv_options_ind = 0
     future_pv_options = ["Default values", "Custom User Input"]
     start_year = st.session_state.input["project_starting_year"]
     final_year = st.session_state.input["project_final_year"]
@@ -596,7 +634,7 @@ if page == "Material Demand":
     if "pv_material_intensity" not in st.session_state:
         st.session_state.pv_material_intensity = np.zeros(pv_years)
 
-    selected_supply_option = st.selectbox("Future PV Production (GWp)", future_pv_options)
+    selected_supply_option = st.selectbox("Future PV Production (GWp)", future_pv_options,index=pv_options_ind)
     if selected_supply_option == "Default values":
         pv_user_input = 1
         # to be determined 
@@ -625,7 +663,11 @@ if page == "Material Demand":
         pv_production = np.zeros(pv_years)
         if "pv_production" not in st.session_state:
             st.session_state.pv_production = np.zeros(pv_years)
-        
+        if st.session_state.input["scenario_option"] == 1:
+            st.session_state.pv_production = np.array([626.71,694.00,756.56,817.59,887.18,969.60
+])
+            st.session_state.pv_market_share = np.array([7.27,7.65,8.04,8.42,8.80,9.19])
+            st.session_state.pv_material_intensity = np.array([24800,24800,24800,24800,24800,24800])
         ind = years_list.index(pv_year)
         pv_annual_production = st.number_input(f"Enter the PV annual production (GWp) for {years_list[ind]}", min_value=0.0, key=f"annual_pv{years_list[ind]}")
         pv_market_share = st.number_input(f"Enter the market share of the PV technology of interest (%) for {years_list[ind]}", min_value=0.0, step=0.1, value=0.0,key=f"annual_pv_share2{years_list[ind]}")
@@ -693,10 +735,15 @@ if page == "Material Demand":
         
     st.subheader("2- Non-PV Demand")
     # Add content for Subsection 2          
-
+    if st.session_state.input["scenario_option"] == 1:
+        nonpv_demand_df = 456.71
+        nonpv_demand_gr_df = 3.96
+    else:
+        nonpv_demand_df = 0.0
+        nonpv_demand_gr_df = 0.0
     # sty = st.session_state.input["project_starting_year"]
-    nonpv_demand = st.number_input (f"Enter the current non-PV demand for first Year (tonnes)", min_value=0.0, step=0.1, value = 0.0)
-    nonpv_demand_gr = st.number_input ("Enter the annual growth rate in non-PV demand (%)", min_value=0.0, step=0.1, value = 0.0)
+    nonpv_demand = st.number_input (f"Enter the current non-PV demand for first Year (tonnes)", min_value=0.00, step=0.01, value = nonpv_demand_df)
+    nonpv_demand_gr = st.number_input ("Enter the annual growth rate in non-PV demand (%)", min_value=0.00, step=0.01, value = nonpv_demand_gr_df)
     
     
     if st.button("Save",key="pv_demand1"):
@@ -916,7 +963,7 @@ if page == "Supply Gap and Price Effect":
     # Add content for Material Global Stocks
     st.divider()
     st.subheader("Global Stocks")
-    global_stocks = st.number_input("Please enter the global stocks", min_value=0.00, step=0.01, value=0.00)
+    global_stocks = st.number_input("Please enter the global stocks", min_value=0.00, step=0.01, value=7500.00)
 
     # save the data
     st.divider()
@@ -1011,8 +1058,8 @@ if page == "Modelling Inputs Review":
                         "Annual production (tonnes)": inputs["bp_annual_production"][:num_bp],
                         "Gloabl reserves (tonnes)": inputs["bp_annual_production"][:num_bp],
                         "Annual production growth rate (%)": inputs["bp_annual_production_growth"][:num_bp],
-                        "Hitchhiker content (ppm)": inputs["bp_hitchhiker_content"][:num_bp],
-                        "Hitchhiker recovery efficiency (%)": inputs["bp_hitchhiker_recovery_efficiency"][:num_bp],
+                        "Hitchhiker content": inputs["bp_hitchhiker_content"][:num_bp],
+                        "Hitchhiker recovery efficiency": inputs["bp_hitchhiker_recovery_efficiency"][:num_bp],
                     })
                     
                     st.write(bp_df.to_html(index=False,justify='left', escape=False), unsafe_allow_html=True)
@@ -1494,11 +1541,11 @@ if page == "Calculate Results":
                           "Annual Material Surplus",
                           "Material Price",
                           "PV Technology material intensity"]
-            MS[ind,:-1] = output.loc[year,columns_MS].values
+            MS[ind,:-1] = output.loc[year-start_year+2023,columns_MS].values
             MS[ind,-1] = np.sum(MS[ind,:-1])
-            MD[ind,:-1] = output.loc[year,columns_MD].values
-            MD[ind,-1] = np.sum(MD[ind,3:5])
-            MP[ind,:] = output.loc[year,columns_MP].values
+            MD[ind,:-1] = output.loc[year-start_year+2023,columns_MD].values
+            MD[ind,-1] = np.sum(MD[ind,2:4])
+            MP[ind,:] = output.loc[year-start_year+2023,columns_MP].values
         
         MS_output = pd.DataFrame(MS)
         MS_output.columns = ["Recycled materials from new solar panels",
