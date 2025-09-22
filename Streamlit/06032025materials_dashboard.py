@@ -68,17 +68,17 @@ if "num_bp_hosts" not in st.session_state:
     st.session_state.num_bp_hosts = 0
 # page 1 default input 09262024
 if "project_title" not in st.session_state.input:
-    st.session_state.input["project_title"] = ""
+    st.session_state.input["project_title"] = "Project 1"
 if "project_investigator" not in st.session_state.input:
-    st.session_state.input["project_investigator"] = ""
+    st.session_state.input["project_investigator"] = "Anonymous"
 if "project_institution" not in st.session_state.input:
-    st.session_state.input["project_institution"] = ""
+    st.session_state.input["project_institution"] = "Institution 1"
 if "project_PV_technology" not in st.session_state.input:
-    st.session_state.input["project_PV_technology"] = ""
+    st.session_state.input["project_PV_technology"] = "Technology 1"
 if "project_target_metal" not in st.session_state.input:
-    st.session_state.input["project_target_metal"] = ""
+    st.session_state.input["project_target_metal"] = "Metal 1"
 if "project_description" not in st.session_state.input:
-    st.session_state.input["project_description"] = ""
+    st.session_state.input["project_description"] = "None"
 if "project_starting_year" not in st.session_state.input:
     st.session_state.input["project_starting_year"] = 2023
 if "project_final_year" not in st.session_state.input:
@@ -91,6 +91,8 @@ if "scenario_option" not in st.session_state.input:
     st.session_state.input["scenario_option"] = 1
 
 # page 2 default input 09262024
+if "pv_user_input" not in st.session_state.input:
+    st.session_state.input["pv_user_input"] = 1
 if "supply_option" not in st.session_state.input:
     st.session_state.input["supply_option"] = 1
 if "global_reserves" not in st.session_state.input:
@@ -281,9 +283,9 @@ if page == "Home":
 if page == "Project Description":
 
     st.header("Project Description", divider='grey')
-    project_title = st.text_input("Project title*", value=st.session_state.input["project_title"])
-    project_investigator = st.text_input("Enter your name*", value=st.session_state.input["project_investigator"])
-    project_institution = st.text_input("Institution*", value=st.session_state.input["project_institution"])
+    project_title = st.text_input("Project title", value=st.session_state.input["project_title"])
+    project_investigator = st.text_input("Enter your name", value=st.session_state.input["project_investigator"])
+    project_institution = st.text_input("Institution", value=st.session_state.input["project_institution"])
     use_options = ["I want to create my own scenario", "I want to use an existing analysis"]
     selected_use_option = st.selectbox("Scenario*", use_options,index=st.session_state.input["user_input"])
 
@@ -294,10 +296,10 @@ if page == "Project Description":
         ind = baseline_options.index(st.session_state.input["scenario"])
         scenario_option = 1
         selected_supply_option = st.selectbox("Select from the available analyses", baseline_options)
-        project_pv_technology = st.text_input("PV Technology*",value="CdTe",disabled=True)
-        project_target_metal = st.text_input("Target metal*",value="Tellurium",disabled=True)
-        project_starting_year= st.number_input("Project timeline - starting year*",value=2030,disabled=True)
-        project_final_year = st.number_input("Project timeline - final year*", min_value=2035, disabled=True)
+        project_pv_technology = st.text_input("PV Technology",value="CdTe",disabled=True)
+        project_target_metal = st.text_input("Target metal",value="Tellurium",disabled=True)
+        project_starting_year= st.number_input("Project timeline - starting year*",value=2030)
+        project_final_year = st.number_input("Project timeline - final year*", value=2035)
     elif selected_use_option == "I want to create my own scenario":
         user_input = 0
         selected_supply_option = "none"
@@ -307,7 +309,7 @@ if page == "Project Description":
         project_starting_year= st.number_input("Project timeline - starting year*",min_value=2023, step=1, value=st.session_state.input["project_starting_year"])
         project_final_year = st.number_input("Project timeline - final year*", min_value=2024, step=1, value=st.session_state.input["project_final_year"])
     
-    project_description = st.text_area("Description*", height=200, value=st.session_state.input["project_description"])
+    project_description = st.text_area("Description", height=200, value=st.session_state.input["project_description"])
 
     # Display the image
     #st.image(image_path)
@@ -349,7 +351,7 @@ if page == "Material Supply":
         st.markdown(
                     """
                     <span style="font-size: 18px;">**Note**: This section will calculate the material flow from direct mining.
-                    <br>**Variables**: Annual production, Year for production
+                    <br>**Variables**: Annual production (tonnes), Year for production
                     """,unsafe_allow_html=True)
     # Add content for Subsection 1
     supply_options = ["Manually input annual production", "Calculate based on current production and future growth"]
@@ -370,7 +372,7 @@ if page == "Material Supply":
         years_list = [f"{i}" for i in range(year_s, year_f+1)]
         year = st.selectbox("Select the year for input",years_list)
         i = years_list.index(year)
-        mine_prod = st.number_input(f"Enter the annual production for {year}", min_value=0.0, step=0.1, key=f"mine_annual_prod{i}")
+        mine_prod = st.number_input(f"Enter the annual production (tonnes) for {year}", min_value=0.0, step=0.1, key=f"mine_annual_prod{i}")
         if st.button("Add",key="mine_prod1"):
             st.session_state.mine_prod[i] = mine_prod
 
@@ -378,7 +380,7 @@ if page == "Material Supply":
             "Year":years_list,
             #"start_year": start_year,
             #"end_year": end_year,
-            "Annual production": st.session_state.mine_prod
+            "Annual production (tonnes)": st.session_state.mine_prod
         })
         st.write(mine_data.to_html(index=False,justify='left', escape=False), unsafe_allow_html=True)
         
@@ -479,18 +481,18 @@ if page == "Material Supply":
         pv_material_intensity = st.selectbox("Material intensity of existing solar panels", material_intensity, key="pv_material_intensity1", index=st.session_state.input["pv_mint"]-1)
         if pv_material_intensity == "Constant Material Intensity":
             pv_mint = 1
-            pv_avg_mint = st.number_input("Please enter the average material intensity of existing solar panels", min_value=0.0, value=float(st.session_state.input["pv_avg_mint"]), step=0.1, key="pv_avg_mint1")
+            pv_avg_mint = st.number_input("Please enter the average material intensity of existing solar panels (kg/GWp)", min_value=0.0, value=float(st.session_state.input["pv_avg_mint"]), step=0.1, key="pv_avg_mint1")
             year = st.selectbox("Select the year for input",years_list,key="pv_mint_year1")            
             y = years_list.index(year)
-            pv_capacity = st.number_input(f"Enter the annual installed PV capacity (Specific technology considered) for Year {y+1}", min_value=0.0, step=0.1, key=f"pv_capacity1_{y}")
+            pv_capacity = st.number_input(f"Enter the annual installed PV capacity (GWp for Specific technology considered) for Year {y+1}", min_value=0.0, step=0.1, key=f"pv_capacity1_{y}")
             if st.button("Add",key="cap1"):
                 st.session_state.input["pv_capacity1"][y] = pv_capacity
             pv_mint_data = pd.DataFrame({
                 "Year":range(1,num_pv_years+1),
-                "PV production":st.session_state.input["pv_capacity1"],
+                "PV production (GWp)":st.session_state.input["pv_capacity1"],
                 #"start_year": start_year,
                 #"end_year": end_year,
-                "Annual Material Intensity": [pv_avg_mint]*num_pv_years,
+                "Annual Material Intensity (kg/GWp)": [pv_avg_mint]*num_pv_years,
             })
             st.write(pv_mint_data.to_html(index=False,justify='left', escape=False), unsafe_allow_html=True)
             
@@ -499,7 +501,7 @@ if page == "Material Supply":
             
             year = st.selectbox("Select the year for input",years_list,key="pv_mint_year2")            
             y = years_list.index(year)
-            pv_capacity = st.number_input(f"Enter the annual installed PV capacity (Specific technology considered) for Year {y+1}", min_value=0.0, step=0.1, key=f"pv_capacity2_{y}")
+            pv_capacity = st.number_input(f"Enter the annual installed PV capacity (GWp for Specific technology considered) for Year {y+1}", min_value=0.0, step=0.1, key=f"pv_capacity2_{y}")
             mint = st.number_input(f"Enter the annual material intensity for Year {i+1}", min_value=0.0, step=0.1, key=f"annual_mint{y}")
             if st.button("Add",key="mint1"):
                 st.session_state.input["pv_capacity1"][y] = pv_capacity
@@ -507,10 +509,10 @@ if page == "Material Supply":
         
             pv_mint_data = pd.DataFrame({
                 "Year":range(1,num_pv_years+1),
-                "PV production":st.session_state.input["pv_capacity1"],
+                "PV production (GWp)":st.session_state.input["pv_capacity1"],
                 #"start_year": start_year,
                 #"end_year": end_year,
-                "Annual Material Intensity": st.session_state.input["pv_annual_mint1"],
+                "Annual Material Intensity (kg/GWp)": st.session_state.input["pv_annual_mint1"],
             })
             st.write(pv_mint_data.to_html(index=False,justify='left', escape=False), unsafe_allow_html=True)
         pv_recycling = st.number_input("Enter the percentage of panels recycled (%)",min_value=0.0, step=0.1, value=float(st.session_state.input["pv_recycling"]), key = "pv_recycling1")
@@ -606,7 +608,6 @@ if page == "Material Supply":
         elif rec_cal_method == 2:
             st.session_state.input["pv_annual_supply_data"] = pv_annual_supply_data
             st.session_state.input["pv_annual_supply"] = st.session_state.pv_material_supply
-        st.write(st.session_state.input["pv_capacity"])
         st.session_state.save2 = True
         st.write(f'<p style="color:red; font-size:18px;">Data saved</p>',unsafe_allow_html=True)
             
@@ -1442,7 +1443,7 @@ if page == "Calculate Results":
             #st.write(data["pv_user_input"])
             #st.write(st.session_state.input["annual_incremental_capacity"])
             output = model.run(params={"Time":year,
-                                       "PV Future Production User Input":data["pv_user_input"],
+                                       "PV Future Production User Input": data["pv_user_input"],
                                        "Planned Annual Incremental Capacity":convert_xr(start_year,data["annual_incremental_capacity1"]),
                                        "PV Deployment Initial Incremental": data["pv_initial_incremental1"],
                                        "Current Annual PV Deployment": data["pv_annual_deployment1"],
@@ -1471,7 +1472,7 @@ if page == "Calculate Results":
                                        "ExPV Material Intensity Constant":data["pv_avg_mint"],
                                        "Direct Mining Estimation Method User Input":data["supply_option"],
                                        ### may have some errors
-                                       "Direct Mining Supply Manual":data["mine_data"]["Annual production"],
+                                       "Direct Mining Supply Manual":data["mine_data"]["Annual production (tonnes)"],
                                        ###
                                        "Direct Mining Reserves User Input":data["global_reserves"],
                                        "Current DM GR":data["global_production"],
@@ -1548,24 +1549,24 @@ if page == "Calculate Results":
             MP[ind,:] = output.loc[year-start_year+2023,columns_MP].values
         
         MS_output = pd.DataFrame(MS)
-        MS_output.columns = ["Recycled materials from new solar panels",
-                             "Recycled materials from existing solar panels",
-                             "Supply from by-production",
-                             "Supply from direct mining",
-                             "Total Supply"]
+        MS_output.columns = ["Recycled materials from new solar panels (tonnes)",
+                             "Recycled materials from existing solar panels (tonnes)",
+                             "Supply from by-production (tonnes)",
+                             "Supply from direct mining (tonnes)",
+                             "Total Supply (tonnes)"]
         MS_output.index = range(start_year, end_year + 1)
         MD_output = pd.DataFrame(MD)
         MD_output.columns = ["Planned PV Demand (GW)",
                              "Actual PV Demand (GW)",
-                             "Annual PV material demand",
-                             "Annual Non-PV material demand",
-                             "Total Demand"]
+                             "Annual PV material demand (tonnes)",
+                             "Annual Non-PV material demand (tonnes)",
+                             "Total Demand (tonnes)"]
         MD_output.index = range(start_year, end_year + 1)  
         MP_output = pd.DataFrame(MP)
-        MP_output.columns = ["Global Stocks",
-                             "Material surplus and supply gap",
-                             "Material price",
-                             "Material intensity"]
+        MP_output.columns = ["Global Stocks (tonnes)",
+                             "Material surplus and supply gap (tonnes)",
+                             "Material price ($/tonnes)",
+                             "Material intensity in PV production(kg/GWp)"]
         MP_output.index = range(start_year, end_year + 1) 
         st.session_state["Cal"] = 1
         st.session_state.output["MS"] = MS_output
@@ -1580,15 +1581,27 @@ if page == "Calculate Results":
         button2 = st.button("Material Supply", use_container_width=True)
         if button2:
             MS = st.session_state.output["MS"] 
-            st.dataframe(MS.T,use_container_width=True)
+            #st.dataframe(MS.T.round(2),use_container_width=True)
+            st.dataframe(
+                MS.T.applymap(lambda x: f"{x:.2f}" if isinstance(x, (int, float)) else x),
+                use_container_width=True
+            )
         button3 = st.button("Material Demand", use_container_width=True)
         if button3:
             MD = st.session_state.output["MD"] 
-            st.dataframe(MD.T,use_container_width=True)  
+            #st.dataframe(MD.T.round(2),use_container_width=True) 
+            st.dataframe(
+                MD.T.applymap(lambda x: f"{x:.2f}" if isinstance(x, (int, float)) else x),
+                use_container_width=True
+            )
         button4 = st.button("Material Price and Availability", use_container_width=True)
         if button4:
             MP = st.session_state.output["MP"] 
-            st.dataframe(MP.T,use_container_width=True)  
+            #st.dataframe(MP.T.round(2),use_container_width=True)  
+            st.dataframe(
+                MP.T.applymap(lambda x: f"{x:.2f}" if isinstance(x, (int, float)) else x),
+                use_container_width=True
+            )
         # for test, may need be removed after all finished
         button5 = st.button("Download Raw Data First Year",use_container_width=True)
         if button5:
@@ -1623,11 +1636,11 @@ if page == "Plot Results":
     if op1:
         data1 = st.session_state.output["MS"]
         metrics = [
-            "Recycled materials from new solar panels",
-            "Recycled materials from existing solar panels",
-            "Supply from by-production",
-            "Supply from direct mining",
-            "Total Supply",
+            "Recycled materials from new solar panels (tonnes)",
+            "Recycled materials from existing solar panels (tonnes)",
+            "Supply from by-production (tonnes)",
+            "Supply from direct mining (tonnes)",
+            "Total Supply (tonnes)",
         ]
 
         st.subheader("Material Supply")
@@ -1655,9 +1668,9 @@ if page == "Plot Results":
         metrics = [
             "Planned PV Demand (GW)",
             "Actual PV Demand (GW)",
-            "Annual PV material demand",
-            "Annual Non-PV material demand",
-            "Total Demand",
+            "Annual PV material demand (tonnes)",
+            "Annual Non-PV material demand (tonnes)",
+            "Total Demand (tonnes)",
         ]
 
         st.subheader("Material Demand")
@@ -1683,10 +1696,10 @@ if page == "Plot Results":
     if op3:
         data3 = st.session_state.output["MP"]
         metrics = [
-            "Global Stocks",
-            "Material surplus and supply gap",
-            "Material price",
-            "Material intensity",
+            "Global Stocks (tonnes)",
+            "Material surplus and supply gap (tonnes)",
+            "Material price ($/tonnes)",
+            "Material intensity in PV production (kg/GWp)",
         ]
 
         st.subheader("Material Price and Availabiility")
